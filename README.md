@@ -33,10 +33,17 @@ Water Works is a beginner-friendly browser puzzle game inspired by the mission o
 
 ### 3) Deploy with GitHub Pages
 
-1. Push your changes to GitHub.
-2. In repository settings, open **Pages**.
-3. Set the source branch (for example `main`) and root folder.
-4. Save and open the published URL.
+This repository includes a GitHub Actions workflow at
+`.github/workflows/deploy-pages.yml`. To publish the game:
+
+1. Push the repository to GitHub.
+2. In repository settings, open **Pages** and set **Source** to **GitHub Actions**.
+3. Push to `main`, or run **Deploy Water Works to GitHub Pages** from the
+   repository's **Actions** tab.
+4. Open the published URL shown in the completed workflow run.
+
+The site is fully static, so GitHub Pages serves `index.html`, `css/styles.css`,
+and `js/script.js` directly without a build step.
 
 ## How to Play
 
@@ -68,6 +75,7 @@ water-works/
 ├── js/
 │   └── script.js       # Game logic (state, rendering, rotation, timer, scoring)
 ├── assets/
+│   ├── charity-water-logo.png # Linked charity: water logo
 │   └── README.md       # Notes for optional local assets
 ├── README.md           # Project documentation
 └── .gitignore

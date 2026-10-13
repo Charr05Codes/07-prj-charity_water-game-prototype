@@ -10,7 +10,15 @@
     <header class="site-header">
       <h1><span class="title-drop" aria-hidden="true">💧</span> Water Works</h1>
       <p class="subtitle">Every Drop Counts</p>
-      <p class="attribution">Inspired by charity: water's mission.</p>
+      <a
+        class="logo-link"
+        href="https://www.charitywater.org/"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <img src="assets/charity-water-logo.png" alt="charity: water logo" />
+      </a>
+      <p class="mission-message">Play with purpose. Learn why clean water matters.</p>
     </header>
 
     <main class="game-shell" aria-live="polite">
@@ -59,12 +67,28 @@
           <p id="overlay-total-score"></p>
         </div>
         <div id="overlay-fact-card" class="overlay-fact hidden">
-          <h3>💧 Why Clean Water Matters</h3>
+          <h3>💧 Every Drop Counts</h3>
           <p id="overlay-fact"></p>
+          <div class="overlay-learning-link">
+            <p>Learn how charity: water is helping communities access clean water.</p>
+            <a href="https://www.charitywater.org/" target="_blank" rel="noopener noreferrer">
+              Learn More at charity: water
+            </a>
+          </div>
         </div>
         <button id="overlay-action" type="button"></button>
+          <button id="overlay-menu-button" class="overlay-menu-button hidden" type="button">
+            Back to Menu
+          </button>
       </div>
     </div>
+
+    <footer class="site-footer">
+      <p>Inspired by charity: water's mission to help bring clean and safe drinking water to people around the world.</p>
+      <p class="disclaimer">Water Works is an independent educational game and is not officially affiliated with or endorsed by charity: water.</p>
+    </footer>
+
+    <div id="confetti-container" class="confetti-container" aria-hidden="true"></div>
 
     <script src="js/script.js"></script>
   </body>

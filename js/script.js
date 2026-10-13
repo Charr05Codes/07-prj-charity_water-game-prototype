@@ -31,6 +31,8 @@ const gameState = {
   solvedBoard: [],
   startingBoard: [],
   timerInterval: null,
+  animationTimeouts: [],
+  confettiCleanupTimeout: null,
   completedLevels: new Set(),
   previousSignature: ""
 };
@@ -51,6 +53,8 @@ let overlayTotalScore;
 let overlayFact;
 let overlayFactCard;
 let overlayAction;
+let overlayMenuButton;
+let confettiContainer;
 
 function initGame() {
   boardElement = document.getElementById("board");
@@ -69,11 +73,14 @@ function initGame() {
   overlayFact = document.getElementById("overlay-fact");
   overlayFactCard = document.getElementById("overlay-fact-card");
   overlayAction = document.getElementById("overlay-action");
+  overlayMenuButton = document.getElementById("overlay-menu-button");
+  confettiContainer = document.getElementById("confetti-container");
 
   startButton.addEventListener("click", startLevel);
   checkButton.addEventListener("click", handleCheckPipes);
   restartButton.addEventListener("click", restartLevel);
   overlayAction.addEventListener("click", handleOverlayAction);
+  overlayMenuButton.addEventListener("click", returnToMenu);
 
   createNewLevel();
   renderBoard();
@@ -82,6 +89,7 @@ function initGame() {
 }
 
 function createNewLevel() {
+  stopSuccessfulPathAnimation();
   const levelData = levels[gameState.currentLevel - 1];
   let puzzle;
   let attempts = 0;
@@ -290,6 +298,7 @@ function startLevel() {
 
 function restartLevel() {
   stopTimer();
+  stopSuccessfulPathAnimation();
   gameState.board = cloneBoard(gameState.startingBoard);
   gameState.timeRemaining = levels[gameState.currentLevel - 1].timeLimit;
   gameState.gameActive = true;
@@ -355,6 +364,9 @@ function rotateDirection(direction, steps) {
 }
 
 function handleCheckPipes() {
+  if (!gameState.gameActive) {
+    return;
+  }
   const result = checkConnections(gameState.board);
   if (result.success) {
     completeLevel(result.path);
@@ -419,18 +431,54 @@ function clearHighlightedPath() {
 }
 
 function animateSuccessfulPath(path) {
+  stopSuccessfulPathAnimation();
   clearHighlightedPath();
-  path.forEach((step, index) => {
-    window.setTimeout(() => {
-      const tile = boardElement.children[step.row * BOARD_SIZE + step.col];
-      if (tile) {
-        tile.classList.add("connected");
-      }
-    }, index * 90);
-  });
+  gameState.animationTimeouts = path.map((step, index) => window.setTimeout(() => {
+    const tile = boardElement.children[step.row * BOARD_SIZE + step.col];
+    if (tile) {
+      tile.classList.add("connected");
+    }
+  }, index * 90));
+}
+
+function stopSuccessfulPathAnimation() {
+  gameState.animationTimeouts.forEach((timeoutId) => window.clearTimeout(timeoutId));
+  gameState.animationTimeouts = [];
+}
+
+function launchConfetti(pieceCount = 60) {
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    return;
+  }
+
+  if (gameState.confettiCleanupTimeout) {
+    window.clearTimeout(gameState.confettiCleanupTimeout);
+  }
+  confettiContainer.replaceChildren();
+  const colors = ["#2563eb", "#38bdf8", "#facc15", "#22c55e", "#f97316", "#ec4899"];
+
+  for (let index = 0; index < pieceCount; index += 1) {
+    const piece = document.createElement("span");
+    piece.className = "confetti-piece";
+    piece.style.setProperty("--confetti-color", colors[Math.floor(Math.random() * colors.length)]);
+    piece.style.setProperty("--confetti-left", `${Math.random() * 100}%`);
+    piece.style.setProperty("--confetti-delay", `${Math.random() * 0.35}s`);
+    piece.style.setProperty("--confetti-duration", `${2 + Math.random() * 2}s`);
+    piece.style.setProperty("--confetti-drift", `${-120 + Math.random() * 240}px`);
+    piece.style.setProperty("--confetti-rotation", `${Math.random() * 360}deg`);
+    confettiContainer.appendChild(piece);
+  }
+
+  gameState.confettiCleanupTimeout = window.setTimeout(() => {
+    confettiContainer.replaceChildren();
+    gameState.confettiCleanupTimeout = null;
+  }, 4500);
 }
 
 function completeLevel(path) {
+  if (!gameState.gameActive || gameState.levelCompleted) {
+    return;
+  }
   stopTimer();
   gameState.gameActive = false;
   gameState.levelCompleted = true;
@@ -447,17 +495,21 @@ function completeLevel(path) {
   overlayTotalScore.textContent = `Total score: ${gameState.score}`;
 
   animateSuccessfulPath(path);
+  const isFinalLevel = gameState.currentLevel === levels.length;
+  launchConfetti(isFinalLevel ? 80 : 60);
   setStatusMessage("Great work! Water reaches the bucket.", "success");
   updateDisplay();
-  const hasNextLevel = gameState.currentLevel < levels.length;
+  const hasNextLevel = !isFinalLevel;
   showOverlay({
-    title: "Great Job!",
+    title: isFinalLevel ? "You did it!" : "Great Job!",
     message: hasNextLevel
       ? `You connected the pipes for Level ${gameState.currentLevel}.`
-      : `Total score: ${gameState.score}. Thank you for learning why clean water access matters.`,
+      : "You completed all levels of Water Works!",
     fact: cleanWaterFacts[(gameState.currentLevel - 1) % cleanWaterFacts.length],
     actionLabel: hasNextLevel ? "Next Level" : "Play Again",
-    actionType: hasNextLevel ? "next" : "play-again"
+    actionType: hasNextLevel ? "next" : "play-again",
+    showMenuButton: true,
+    finalCelebration: isFinalLevel
   });
 }
 
@@ -479,26 +531,57 @@ function handleTimeUp() {
   });
 }
 
-function showOverlay({ title, message, fact, actionLabel, actionType }) {
+function showOverlay({
+  title,
+  message,
+  fact,
+  actionLabel,
+  actionType,
+  showMenuButton = false,
+  finalCelebration = false
+}) {
   overlayTitle.textContent = title;
   overlayMessage.textContent = message;
   overlayFact.textContent = fact || "";
   overlayFactCard.classList.toggle("hidden", !fact);
   overlayAction.textContent = actionLabel;
   overlayAction.dataset.action = actionType;
+  overlayMenuButton.classList.toggle("hidden", !showMenuButton);
+  overlay.classList.toggle("final-celebration", finalCelebration);
   overlay.classList.remove("hidden");
 }
 
 function hideOverlay() {
   if (overlay) {
     overlay.classList.add("hidden");
+    overlay.classList.remove("final-celebration");
     overlayAction.dataset.action = "";
+    overlayMenuButton.classList.add("hidden");
   }
+}
+
+function returnToMenu() {
+  stopTimer();
+  stopSuccessfulPathAnimation();
+  gameState.currentLevel = 1;
+  gameState.score = 0;
+  gameState.gameStarted = false;
+  gameState.gameActive = false;
+  gameState.levelCompleted = false;
+  gameState.completedLevels.clear();
+  createNewLevel();
+  renderBoard();
+  updateDisplay();
+  updateControls();
+  setStatusMessage("Press Start Game to begin.", "");
 }
 
 function handleOverlayAction() {
   const action = overlayAction.dataset.action;
   if (action === "next") {
+    if (!gameState.levelCompleted || gameState.currentLevel >= levels.length) {
+      return;
+    }
     gameState.currentLevel += 1;
     createNewLevel();
     startLevel();
@@ -509,16 +592,7 @@ function handleOverlayAction() {
     return;
   }
   if (action === "play-again") {
-    stopTimer();
-    gameState.currentLevel = 1;
-    gameState.score = 0;
-    gameState.gameStarted = false;
-    gameState.completedLevels.clear();
-    createNewLevel();
-    renderBoard();
-    updateDisplay();
-    updateControls();
-    setStatusMessage("Press Start Game to play again from Level 1.", "");
+    returnToMenu();
   }
 }
 

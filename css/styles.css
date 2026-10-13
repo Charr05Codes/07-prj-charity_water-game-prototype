@@ -68,16 +68,51 @@ body::after {
 }
 
 .subtitle {
-  margin: 0.7rem 0 0.25rem;
+  margin: 0.7rem 0 0.8rem;
   color: var(--deep-blue);
   font-size: 1.1rem;
   font-weight: 700;
 }
 
-.attribution {
-  margin: 0;
+.logo-link {
+  display: block;
+  width: fit-content;
+  max-width: min(260px, 80vw);
+  margin: 0 auto;
+  background: var(--white);
+  line-height: 0;
+}
+
+.logo-link img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.mission-message {
+  margin: 0.8rem 0 0;
   color: #52708b;
   font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.site-footer {
+  width: min(calc(100% - 32px), 720px);
+  margin: 0 auto;
+  padding: 0 0 2rem;
+  color: #52708b;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.site-footer p {
+  margin: 0.35rem 0;
+}
+
+.site-footer .disclaimer {
+  color: #71869a;
+  font-size: 0.72rem;
 }
 
 .game-shell {
@@ -385,6 +420,12 @@ button:disabled {
   font-size: 1.8rem;
 }
 
+.final-celebration .overlay-card h2 {
+  color: var(--primary-blue);
+  font-size: clamp(2rem, 7vw, 2.6rem);
+  font-weight: 800;
+}
+
 .overlay-card > p:not(.overlay-kicker) {
   margin: 0.65rem 0;
 }
@@ -427,6 +468,64 @@ button:disabled {
   color: #52708b;
   font-size: 0.9rem;
   line-height: 1.45;
+}
+
+.overlay-learning-link {
+  margin-top: 0.85rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #bae6fd;
+}
+
+.overlay-learning-link p {
+  margin-bottom: 0.55rem;
+  font-size: 0.8rem;
+}
+
+.overlay-learning-link a {
+  color: var(--primary-blue);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.overlay-menu-button {
+  margin-top: 0.65rem;
+  border-color: #bfdbfe;
+  background: var(--white);
+  color: var(--primary-blue);
+}
+
+.overlay-menu-button:hover:enabled {
+  background: #eff6ff;
+}
+
+.confetti-container {
+  position: fixed;
+  z-index: 20;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.confetti-piece {
+  position: absolute;
+  top: -1rem;
+  left: var(--confetti-left);
+  width: 0.6rem;
+  height: 1rem;
+  background: var(--confetti-color);
+  opacity: 0;
+  animation: confetti-fall var(--confetti-duration) var(--confetti-delay) ease-in forwards;
+}
+
+@keyframes confetti-fall {
+  0% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) rotate(var(--confetti-rotation));
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(var(--confetti-drift), 105vh, 0) rotate(calc(var(--confetti-rotation) + 720deg));
+  }
 }
 
 @keyframes modal-in {
@@ -472,5 +571,9 @@ button:disabled {
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
+  }
+
+  .confetti-container {
+    display: none;
   }
 }
