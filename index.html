@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Water Works</title>
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <h1><span class="title-drop" aria-hidden="true">💧</span> Water Works</h1>
+      <p class="subtitle">Every Drop Counts</p>
+      <a
+        class="logo-link"
+        href="https://www.charitywater.org/"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <img src="assets/charity-water-logo.png" alt="charity: water logo" />
+      </a>
+      <p class="mission-message">Play with purpose. Learn why clean water matters.</p>
+    </header>
+
+    <main class="game-shell" aria-live="polite">
+      <section class="game-panel" aria-label="Water Works puzzle game">
+        <h2>Connect the Water Flow</h2>
+        <p class="instructions">
+          Rotate the pipes by clicking them. Connect the water source to the bucket before time runs out. Click Check Pipes when you think the path is complete.
+        </p>
+
+        <div class="stats-row">
+          <p><strong>Level:</strong> <span id="level-indicator">1</span></p>
+          <p><strong>Score:</strong> <span id="score-indicator">0</span></p>
+          <p><strong>Time:</strong> <span id="timer" aria-label="Time remaining">01:30</span></p>
+        </div>
+
+        <div class="board-frame">
+          <div class="source-row" aria-hidden="true">
+            <div class="source-cell">💧 Source</div>
+          </div>
+
+          <div id="board" class="board" role="grid" aria-label="5 by 5 pipe puzzle board"></div>
+
+          <div class="bucket-row" aria-hidden="true">
+            <div class="bucket-cell">Bucket 🪣</div>
+          </div>
+        </div>
+
+        <div class="control-row">
+          <button id="start-button" type="button">Start Game</button>
+          <button id="check-button" type="button" disabled>Check Pipes</button>
+          <button id="restart-button" type="button" disabled>Restart Level</button>
+        </div>
+
+        <p id="status-message" class="status-message" role="status">Press Start Game to begin.</p>
+      </section>
+    </main>
+
+    <div id="overlay" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="overlay-title">
+      <div class="overlay-card">
+        <div class="overlay-drop" aria-hidden="true">💧</div>
+        <p class="overlay-kicker">Water flow unlocked</p>
+        <h2 id="overlay-title"></h2>
+        <p id="overlay-message"></p>
+        <div class="overlay-score-row">
+          <p id="overlay-points"></p>
+          <p id="overlay-total-score"></p>
+        </div>
+        <div id="overlay-fact-card" class="overlay-fact hidden">
+          <h3>💧 Every Drop Counts</h3>
+          <p id="overlay-fact"></p>
+          <div class="overlay-learning-link">
+            <p>Learn how charity: water is helping communities access clean water.</p>
+            <a href="https://www.charitywater.org/" target="_blank" rel="noopener noreferrer">
+              Learn More at charity: water
+            </a>
+          </div>
+        </div>
+        <button id="overlay-action" type="button"></button>
+          <button id="overlay-menu-button" class="overlay-menu-button hidden" type="button">
+            Back to Menu
+          </button>
+      </div>
+    </div>
+
+    <footer class="site-footer">
+      <p>Inspired by charity: water's mission to help bring clean and safe drinking water to people around the world.</p>
+      <p class="disclaimer">Water Works is an independent educational game and is not officially affiliated with or endorsed by charity: water.</p>
+    </footer>
+
+    <div id="confetti-container" class="confetti-container" aria-hidden="true"></div>
+
+    <script src="js/script.js"></script>
+  </body>
+</html>
