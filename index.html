@@ -8,7 +8,7 @@
   </head>
   <body>
     <header class="site-header">
-      <h1>Water Works</h1>
+      <h1><span class="title-drop" aria-hidden="true">💧</span> Water Works</h1>
       <p class="subtitle">Every Drop Counts</p>
       <p class="attribution">Inspired by charity: water's mission.</p>
     </header>
@@ -46,21 +46,22 @@
 
         <p id="status-message" class="status-message" role="status">Press Start Game to begin.</p>
       </section>
-
-      <section class="education-panel" aria-label="Clean water message">
-        <h2>Why Clean Water Matters</h2>
-        <p>
-          Clean water helps communities stay healthy, spend less time collecting water, and focus more on education and opportunity.
-        </p>
-      </section>
     </main>
 
     <div id="overlay" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="overlay-title">
       <div class="overlay-card">
+        <div class="overlay-drop" aria-hidden="true">💧</div>
+        <p class="overlay-kicker">Water flow unlocked</p>
         <h2 id="overlay-title"></h2>
         <p id="overlay-message"></p>
-        <p id="overlay-points"></p>
-        <p id="overlay-fact" class="overlay-fact"></p>
+        <div class="overlay-score-row">
+          <p id="overlay-points"></p>
+          <p id="overlay-total-score"></p>
+        </div>
+        <div id="overlay-fact-card" class="overlay-fact hidden">
+          <h3>💧 Why Clean Water Matters</h3>
+          <p id="overlay-fact"></p>
+        </div>
         <button id="overlay-action" type="button"></button>
       </div>
     </div>
